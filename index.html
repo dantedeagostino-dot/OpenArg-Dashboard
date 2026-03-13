@@ -35,12 +35,23 @@
         .bg-accent-blue { background-color: #3B82F6; }
         .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.5rem; padding: 1.5rem; }
         .stat-card:hover { border-color: rgba(59,130,246,0.4); }
-        .level-alta { background: rgba(16,185,129,0.15); color: #10B981; }
-        .level-moderada { background: rgba(59,130,246,0.15); color: #3B82F6; }
-        .level-transicion { background: rgba(245,158,11,0.15); color: #F59E0B; }
-        .level-insuficiente { background: rgba(239,68,68,0.15); color: #EF4444; }
-        .level-critica { background: rgba(220,38,38,0.25); color: #FCA5A5; }
         ::-webkit-scrollbar { height:4px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-thumb { background:#334155; border-radius:2px; }
+
+        /* Mobile hamburger menu */
+        .mobile-menu-btn { display: none; }
+        .mobile-tabs-overlay { display: none; }
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: flex; }
+            #nav-tabs { display: none; position: fixed; top: 56px; left: 0; right: 0; bottom: 0; background: rgba(2,6,23,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); flex-direction: column; padding: 1.5rem; gap: 0.5rem; z-index: 100; overflow-y: auto; }
+            #nav-tabs.mobile-open { display: flex; }
+            #nav-tabs .tab-pill { text-align: left; padding: 0.875rem 1.25rem; font-size: 0.875rem; border-radius: 1rem; }
+            .stat-card { padding: 1rem; border-radius: 1rem; }
+            table { font-size: 0.75rem; }
+            table th, table td { padding: 0.375rem 0.5rem; }
+        }
+        @media (max-width: 480px) {
+            .stat-card { padding: 0.75rem; }
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-300 min-h-screen">
@@ -52,6 +63,11 @@
             <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-black text-white text-sm">O</div>
             <span class="font-black text-white text-sm tracking-tight">OpenArg</span>
         </div>
+        <!-- Mobile hamburger -->
+        <button onclick="toggleMobileMenu()" class="mobile-menu-btn w-10 h-10 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white" aria-label="Menú">
+            <svg id="menu-icon" class="w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <svg id="close-icon" class="w-5 h-5 mx-auto hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
         <div class="flex gap-1 overflow-x-auto pb-1" id="nav-tabs">
             <button onclick="switchTab('inicio')" class="tab-pill active px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap" data-tab="inicio">Inicio</button>
             <button onclick="switchTab('transparencia')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="transparencia">Transparencia</button>
@@ -70,11 +86,11 @@
 
 <!-- TAB 1: INICIO -->
 <section id="tab-inicio" class="tab-content active">
-    <div class="max-w-7xl mx-auto px-4 py-12">
+    <div class="max-w-7xl mx-auto px-4 py-8 md:py-12">
         <!-- Hero -->
         <div class="text-center mb-16 animate-fade-in-up">
             <div class="inline-block px-4 py-1.5 mb-6 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-widest rounded-full">Dashboard de Inteligencia Pública</div>
-            <h1 class="text-4xl md:text-7xl font-black text-white leading-tight tracking-tighter mb-6">
+            <h1 class="text-3xl sm:text-4xl md:text-7xl font-black text-white leading-tight tracking-tighter mb-4 md:mb-6">
                 Modernizar el Estado <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-emerald-400 to-amber-400">es Democratizar.</span>
             </h1>
             <p class="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto font-light leading-relaxed">
@@ -130,12 +146,12 @@
             <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
                 <h3 class="text-lg font-bold text-white mb-2">Índice INTRA 2024</h3>
                 <p class="text-xs text-slate-500 mb-4">Transparencia de la Administración Pública Provincial — 25 jurisdicciones</p>
-                <div style="height:500px;"><canvas id="chart-intra"></canvas></div>
+                <div class="h-[350px] md:h-[500px]"><canvas id="chart-intra"></canvas></div>
             </div>
             <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
                 <h3 class="text-lg font-bold text-white mb-2">Índice ITPP 2024 (CIPPEC)</h3>
                 <p class="text-xs text-slate-500 mb-4">Transparencia Presupuestaria Provincial — Top 11 + promedio</p>
-                <div style="height:500px;"><canvas id="chart-itpp"></canvas></div>
+                <div class="h-[300px] md:h-[500px]"><canvas id="chart-itpp"></canvas></div>
             </div>
         </div>
         <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -162,18 +178,18 @@
             <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
                 <h3 class="text-lg font-bold text-white mb-4">Infraestructura por Tamaño de Municipio</h3>
                 <p class="text-xs text-slate-500 mb-4">Servidores físicos vs. Nube por rango poblacional</p>
-                <div style="height:350px;"><canvas id="chart-infra"></canvas></div>
+                <div class="h-[250px] md:h-[350px]"><canvas id="chart-infra"></canvas></div>
             </div>
             <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
                 <h3 class="text-lg font-bold text-white mb-4">Capacidades Tecnológicas</h3>
                 <p class="text-xs text-slate-500 mb-4">Indicadores clave del ecosistema digital municipal</p>
-                <div style="height:350px;"><canvas id="chart-capacidades"></canvas></div>
+                <div class="h-[250px] md:h-[350px]"><canvas id="chart-capacidades"></canvas></div>
             </div>
         </div>
         <!-- Distribution Table -->
         <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 mb-8 overflow-x-auto">
             <h3 class="text-lg font-bold text-white mb-4">Distribución de Gobiernos Locales por Jurisdicción</h3>
-            <table class="w-full text-sm">
+            <table class="w-full text-sm min-w-[400px]">
                 <thead><tr class="text-left text-xs uppercase tracking-widest text-slate-500 border-b border-white/10">
                     <th class="pb-3 pr-4">Jurisdicción</th><th class="pb-3 pr-4">Total</th><th class="pb-3 pr-4">Municipios</th><th class="pb-3 pr-4">Comunas</th><th class="pb-3">Juntas</th>
                 </tr></thead>
@@ -289,7 +305,7 @@
         <!-- Autonomy Levels -->
         <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 mb-8 overflow-x-auto">
             <h3 class="text-lg font-bold text-white mb-4">Niveles de Autonomía en la Gestión Pública</h3>
-            <table class="w-full text-sm">
+            <table class="w-full text-sm min-w-[500px]">
                 <thead><tr class="text-left text-xs uppercase tracking-widest text-slate-500 border-b border-white/10">
                     <th class="pb-3 pr-4">Nivel</th><th class="pb-3 pr-4">Capacidades</th><th class="pb-3">Aplicación Pública</th>
                 </tr></thead>
@@ -457,7 +473,7 @@
         <!-- Full Portal Table -->
         <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 mb-8 overflow-x-auto">
             <h3 class="text-lg font-bold text-white mb-4">Catálogo Completo de Portales</h3>
-            <table class="w-full text-sm">
+            <table class="w-full text-sm min-w-[500px]">
                 <thead><tr class="text-left text-xs uppercase tracking-widest text-slate-500 border-b border-white/10">
                     <th class="pb-3 pr-4">Portal</th><th class="pb-3 pr-4">Nivel</th><th class="pb-3 pr-4">Tipo</th><th class="pb-3 pr-4 text-right">Archivos</th><th class="pb-3 text-right">Tamaño</th>
                 </tr></thead>
@@ -567,6 +583,17 @@
 </footer>
 
 <script>
+// Mobile menu
+function toggleMobileMenu() {
+    const tabs = document.getElementById('nav-tabs');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+    const isOpen = tabs.classList.toggle('mobile-open');
+    menuIcon.classList.toggle('hidden', isOpen);
+    closeIcon.classList.toggle('hidden', !isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+
 // Tab system
 const chartsInitialized = {};
 function switchTab(tabId) {
@@ -575,6 +602,9 @@ function switchTab(tabId) {
     document.getElementById('tab-' + tabId).classList.add('active');
     const pill = document.querySelector(`[data-tab="${tabId}"]`);
     if (pill) { pill.classList.add('active'); pill.classList.remove('text-slate-400'); }
+    // Close mobile menu if open
+    const tabs = document.getElementById('nav-tabs');
+    if (tabs.classList.contains('mobile-open')) { toggleMobileMenu(); }
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (!chartsInitialized[tabId]) { initCharts(tabId); chartsInitialized[tabId] = true; }
 }
