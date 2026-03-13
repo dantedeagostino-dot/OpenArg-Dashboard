@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenArg: Modernización del Estado | Laboratorio Colossus</title>
+    <meta name="description" content="Dashboard interactivo sobre modernización estatal, datos abiertos, IA y transformación democrática en Argentina.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="OpenArg: Modernización del Estado | Laboratorio Colossus">
+    <meta property="og:description" content="Dashboard interactivo sobre modernización estatal, datos abiertos, IA y transformación democrática en Argentina.">
+    <meta property="og:locale" content="es_AR">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        @keyframes fadeInUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes pulseGlow { 0%,100% { box-shadow:0 0 0 0 rgba(59,130,246,0.4); } 50% { box-shadow:0 0 15px 6px rgba(59,130,246,0.15); } }
+        @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-6px); } }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity:0; }
+        .delay-1 { animation-delay:0.1s; } .delay-2 { animation-delay:0.2s; } .delay-3 { animation-delay:0.3s; } .delay-4 { animation-delay:0.4s; }
+        .card-hover { transition: transform 0.3s, box-shadow 0.3s; }
+        .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.3); }
+        .tab-content { display:none; } .tab-content.active { display:block; }
+        .tab-pill { transition: all 0.3s; }
+        .tab-pill.active { background: #3B82F6; color: white; }
+        .glass-nav { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+        .accent-blue { color: #3B82F6; }
+        .accent-emerald { color: #10B981; }
+        .accent-amber { color: #F59E0B; }
+        .bg-accent-blue { background-color: #3B82F6; }
+        .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.5rem; padding: 1.5rem; }
+        .stat-card:hover { border-color: rgba(59,130,246,0.4); }
+        .level-alta { background: rgba(16,185,129,0.15); color: #10B981; }
+        .level-moderada { background: rgba(59,130,246,0.15); color: #3B82F6; }
+        .level-transicion { background: rgba(245,158,11,0.15); color: #F59E0B; }
+        .level-insuficiente { background: rgba(239,68,68,0.15); color: #EF4444; }
+        .level-critica { background: rgba(220,38,38,0.25); color: #FCA5A5; }
+        ::-webkit-scrollbar { height:4px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-thumb { background:#334155; border-radius:2px; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-300 min-h-screen">
+
+<!-- NAVBAR -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 glass-nav bg-slate-950/80 border-b border-white/5 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-black text-white text-sm">O</div>
+            <span class="font-black text-white text-sm tracking-tight">OpenArg</span>
+        </div>
+        <div class="flex gap-1 overflow-x-auto pb-1" id="nav-tabs">
+            <button onclick="switchTab('inicio')" class="tab-pill active px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap" data-tab="inicio">Inicio</button>
+            <button onclick="switchTab('transparencia')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="transparencia">Transparencia</button>
+            <button onclick="switchTab('municipios')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="municipios">Municipios</button>
+            <button onclick="switchTab('datos')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="datos">Datos Abiertos</button>
+            <button onclick="switchTab('agentico')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="agentico">Estado Agéntico</button>
+            <button onclick="switchTab('desafios')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="desafios">Desafíos 2026</button>
+            <button onclick="switchTab('democracia')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="democracia">Democracia IA</button>
+            <button onclick="switchTab('datasets')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="datasets">Datasets</button>
+            <button onclick="switchTab('tecnologias')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="tecnologias">Laboratorio Colossus Lab</button>
+        </div>
+    </div>
+</nav>
+
+<main class="pt-20">
+
+<!-- TAB 1: INICIO -->
+<section id="tab-inicio" class="tab-content active">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <!-- Hero -->
+        <div class="text-center mb-16 animate-fade-in-up">
+            <div class="inline-block px-4 py-1.5 mb-6 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-widest rounded-full">Dashboard de Inteligencia Pública</div>
+            <h1 class="text-4xl md:text-7xl font-black text-white leading-tight tracking-tighter mb-6">
+                Modernizar el Estado <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-emerald-400 to-amber-400">es Democratizar.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto font-light leading-relaxed">
+                Argentina tiene 2,327 gobiernos locales. Solo el 30% tiene un área de modernización. Este dashboard cruza datos de transparencia, digitalización municipal e inteligencia artificial para trazar el mapa de la transformación pendiente.
+            </p>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+            <div class="stat-card card-hover animate-fade-in-up delay-1">
+                <div class="text-3xl md:text-4xl font-black accent-blue mb-1">2,327</div>
+                <div class="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Gobiernos Locales</div>
+                <p class="text-xs text-slate-500">80% tiene menos de 10,000 hab.</p>
+            </div>
+            <div class="stat-card card-hover animate-fade-in-up delay-2">
+                <div class="text-3xl md:text-4xl font-black accent-emerald mb-1">54.3</div>
+                <div class="text-[10px] font-bold text-white uppercase tracking-widest mb-1">INTRA Promedio</div>
+                <p class="text-xs text-slate-500">Transparencia sobre 100 pts.</p>
+            </div>
+            <div class="stat-card card-hover animate-fade-in-up delay-3">
+                <div class="text-3xl md:text-4xl font-black accent-amber mb-1">80%</div>
+                <div class="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Formación Inadecuada</div>
+                <p class="text-xs text-slate-500">Personal TIC municipal.</p>
+            </div>
+            <div class="stat-card card-hover animate-fade-in-up delay-4">
+                <div class="text-3xl md:text-4xl font-black text-red-400 mb-1">7.5%</div>
+                <div class="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Expediente Electrónico</div>
+                <p class="text-xs text-slate-500">Municipios con nivel significativo.</p>
+            </div>
+        </div>
+
+        <!-- Synthesis -->
+        <div class="max-w-4xl mx-auto bg-white/[0.03] border border-white/10 rounded-3xl p-8 md:p-12 animate-fade-in-up">
+            <h3 class="text-xl font-bold text-white mb-6">📊 Síntesis Evaluativa</h3>
+            <div class="space-y-4 text-sm leading-relaxed">
+                <p>Argentina opera a <strong class="text-white">dos velocidades</strong>: un puñado de ciudades líderes (CABA, Mendoza, Bahía Blanca) compiten a nivel global en datos abiertos, mientras cientos de municipios pequeños gestionan con papel y conexiones deficientes.</p>
+                <p>La <strong class="text-white">brecha digital municipal</strong> no es solo tecnológica. Es una brecha democrática: sin datos abiertos ni sistemas interoperables, los ciudadanos de municipios pequeños no pueden ejercer el derecho a la transparencia que sí disfrutan los de las grandes ciudades.</p>
+                <p>El <strong class="text-white">Estado Agéntico</strong> —donde la IA no solo automatiza sino que razona y ejecuta— es una oportunidad de "leapfrogging" si se construyen las bases de infraestructura, talento y gobernanza de datos. Sin esas bases, la IA será otro privilegio de las jurisdicciones más ricas.</p>
+                <p class="text-white font-bold italic border-l-4 border-blue-600 pl-6 text-base">"La meta para 2030 debe ser una administración proactiva, donde el dato sea el activo estratégico para construir políticas públicas más justas, eficientes y humanas."</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB 2: TRANSPARENCIA -->
+<section id="tab-transparencia" class="tab-content">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3">Rankings de Transparencia</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">El promedio nacional INTRA es de apenas 54.3/100. Solo 3 jurisdicciones superan los 70 puntos.</p>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
+                <h3 class="text-lg font-bold text-white mb-2">Índice INTRA 2024</h3>
+                <p class="text-xs text-slate-500 mb-4">Transparencia de la Administración Pública Provincial — 25 jurisdicciones</p>
+                <div style="height:500px;"><canvas id="chart-intra"></canvas></div>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
+                <h3 class="text-lg font-bold text-white mb-2">Índice ITPP 2024 (CIPPEC)</h3>
+                <p class="text-xs text-slate-500 mb-4">Transparencia Presupuestaria Provincial — Top 11 + promedio</p>
+                <div style="height:500px;"><canvas id="chart-itpp"></canvas></div>
+            </div>
+        </div>
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="stat-card card-hover">
+                <div class="text-2xl font-black accent-amber mb-2">⚠️ Disparidad Cruzada</div>
+                <p class="text-sm">Chaco lidera en transparencia <strong class="text-white">presupuestaria</strong> (9.55/10) pero cae al puesto 14 en transparencia <strong class="text-white">administrativa</strong> (58.35/100). Muchas provincias publican datos fiscales pero ocultan sueldos y declaraciones juradas.</p>
+            </div>
+            <div class="stat-card card-hover">
+                <div class="text-2xl font-black text-red-400 mb-2">🚨 Zonas Críticas</div>
+                <p class="text-sm">Formosa (12.83) carece de Boletín Oficial digital accesible. Santiago del Estero (20.79) presenta demoras sistemáticas en publicación de cuentas. El 92% de las provincias no permite acceso efectivo a información pública básica.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB 3: MUNICIPIOS -->
+<section id="tab-municipios" class="tab-content">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3">Capacidades Municipales</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">Diagnóstico sobre 370 gobiernos locales: infraestructura, conectividad y capital humano para la transformación digital.</p>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4">Infraestructura por Tamaño de Municipio</h3>
+                <p class="text-xs text-slate-500 mb-4">Servidores físicos vs. Nube por rango poblacional</p>
+                <div style="height:350px;"><canvas id="chart-infra"></canvas></div>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4">Capacidades Tecnológicas</h3>
+                <p class="text-xs text-slate-500 mb-4">Indicadores clave del ecosistema digital municipal</p>
+                <div style="height:350px;"><canvas id="chart-capacidades"></canvas></div>
+            </div>
+        </div>
+        <!-- Distribution Table -->
+        <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 mb-8 overflow-x-auto">
+            <h3 class="text-lg font-bold text-white mb-4">Distribución de Gobiernos Locales por Jurisdicción</h3>
+            <table class="w-full text-sm">
+                <thead><tr class="text-left text-xs uppercase tracking-widest text-slate-500 border-b border-white/10">
+                    <th class="pb-3 pr-4">Jurisdicción</th><th class="pb-3 pr-4">Total</th><th class="pb-3 pr-4">Municipios</th><th class="pb-3 pr-4">Comunas</th><th class="pb-3">Juntas</th>
+                </tr></thead>
+                <tbody class="text-slate-300">
+                    <tr class="border-b border-white/5 font-bold text-white"><td class="py-2 pr-4">Total País</td><td>2,327</td><td>1,211</td><td>965</td><td>151</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4">Córdoba</td><td>427</td><td>260</td><td>167</td><td>0</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4">Santa Fe</td><td>365</td><td>57</td><td>308</td><td>0</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4">Entre Ríos</td><td>271</td><td>83</td><td>55</td><td>133</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4">Buenos Aires</td><td>135</td><td>135</td><td>0</td><td>0</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4">Corrientes</td><td>74</td><td>74</td><td>0</td><td>0</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4">Chaco</td><td>70</td><td>70</td><td>0</td><td>0</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4">San Luis</td><td>68</td><td>26</td><td>42</td><td>0</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4">Salta</td><td>60</td><td>60</td><td>0</td><td>0</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4">Formosa</td><td>55</td><td>27</td><td>10</td><td>18</td></tr>
+                    <tr><td class="py-2 pr-4">Tierra del Fuego</td><td>3</td><td>3</td><td>0</td><td>0</td></tr>
+                </tbody>
+            </table>
+            <p class="text-[10px] text-slate-600 mt-3">Fuente: INDEC 2020 / ReFeGlo. El 52% de los gobiernos locales tiene entre 1 y 2,500 habitantes.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="stat-card card-hover text-center">
+                <div class="text-3xl font-black text-blue-400 mb-1">30%</div>
+                <div class="text-xs font-bold text-white uppercase tracking-widest">Área de Modernización</div>
+                <p class="text-[10px] text-slate-500 mt-1">Cae a 18.5% en municipios &lt;10,000 hab</p>
+            </div>
+            <div class="stat-card card-hover text-center">
+                <div class="text-3xl font-black text-emerald-400 mb-1">99%</div>
+                <div class="text-xs font-bold text-white uppercase tracking-widest">Tiene Internet</div>
+                <p class="text-[10px] text-slate-500 mt-1">Pero solo 31% funciona correctamente</p>
+            </div>
+            <div class="stat-card card-hover text-center">
+                <div class="text-3xl font-black text-amber-400 mb-1">16%</div>
+                <div class="text-xs font-bold text-white uppercase tracking-widest">Resuelve TI Internamente</div>
+                <p class="text-[10px] text-slate-500 mt-1">El resto depende de tercerización</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB 4: DATOS ABIERTOS -->
+<section id="tab-datos" class="tab-content">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3">Datos Abiertos en Argentina</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">7 ciudades lideran con puntaje perfecto en el IDAC 2025. La clave es calidad, no cantidad.</p>
+        </div>
+        <!-- IDAC Leaders -->
+        <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-8 mb-8">
+            <h3 class="text-lg font-bold text-white mb-2">🏆 IDAC 2025 — Ciudades con 100% de Cumplimiento</h3>
+            <p class="text-xs text-slate-500 mb-6">Índice de Datos Abiertos de Ciudades — Fundación Conocimiento Abierto</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center"><div class="text-2xl mb-1">🏛️</div><div class="text-xs font-bold text-emerald-400">CABA</div></div>
+                <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center"><div class="text-2xl mb-1">🍇</div><div class="text-xs font-bold text-emerald-400">Mendoza</div></div>
+                <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center"><div class="text-2xl mb-1">🍇</div><div class="text-xs font-bold text-emerald-400">Godoy Cruz</div></div>
+                <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center"><div class="text-2xl mb-1">🍇</div><div class="text-xs font-bold text-emerald-400">Luján de Cuyo</div></div>
+                <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center"><div class="text-2xl mb-1">🌊</div><div class="text-xs font-bold text-emerald-400">Bahía Blanca</div></div>
+                <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center"><div class="text-2xl mb-1">🏖️</div><div class="text-xs font-bold text-emerald-400">Gral. Pueyrredón</div></div>
+                <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center"><div class="text-2xl mb-1">🌾</div><div class="text-xs font-bold text-emerald-400">Crespo (ER)</div></div>
+            </div>
+            <p class="text-xs text-slate-500 mt-4">📍 Mendoza forma un <strong class="text-emerald-400">"clúster de transparencia"</strong> con 3 municipios vecinos al 100%.</p>
+        </div>
+        <!-- Quality vs Quantity -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
+                <h3 class="text-lg font-bold text-red-400 mb-4">❌ Enfoque Cantidad (Saturación)</h3>
+                <ul class="space-y-3 text-sm">
+                    <li class="flex gap-2"><span class="text-red-400">•</span><span>PDFs, imágenes y planillas desestructuradas que cumplen "de vitrina"</span></li>
+                    <li class="flex gap-2"><span class="text-red-400">•</span><span>Barreras de uso insalvables para el ciudadano y analista</span></li>
+                    <li class="flex gap-2"><span class="text-red-400">•</span><span>Riesgo de desinformación: datos sin trazabilidad generan conclusiones erróneas</span></li>
+                </ul>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
+                <h3 class="text-lg font-bold text-emerald-400 mb-4">✅ Enfoque Calidad (Diseño con Propósito)</h3>
+                <ul class="space-y-3 text-sm">
+                    <li class="flex gap-2"><span class="text-emerald-400">•</span><span><strong class="text-white">Exactitud:</strong> datos que reflejan fielmente la realidad</span></li>
+                    <li class="flex gap-2"><span class="text-emerald-400">•</span><span><strong class="text-white">Integridad:</strong> todos los atributos necesarios capturados</span></li>
+                    <li class="flex gap-2"><span class="text-emerald-400">•</span><span><strong class="text-white">Consistencia:</strong> coherencia entre sistemas</span></li>
+                    <li class="flex gap-2"><span class="text-emerald-400">•</span><span><strong class="text-white">Puntualidad:</strong> datos disponibles en tiempo esperado</span></li>
+                    <li class="flex gap-2"><span class="text-emerald-400">•</span><span><strong class="text-white">Accesibilidad:</strong> CSV, JSON, XML — sin restricciones</span></li>
+                </ul>
+            </div>
+        </div>
+        <!-- Interoperability -->
+        <div class="bg-gradient-to-r from-blue-500/10 to-emerald-500/10 border border-blue-500/20 rounded-3xl p-8">
+            <h3 class="text-lg font-bold text-white mb-4">🔄 Interoperabilidad vs. Carga Manual</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="text-sm font-bold text-red-400 mb-2">Riesgos de la Gestión Manual</h4>
+                    <p class="text-sm">En muchos municipios, los datos pasan de un área a otra en papel o WhatsApp. Solo el <strong class="text-white">14%</strong> utiliza estándares de interoperabilidad. Los errores de transcripción, la falta de trazabilidad y los costos ocultos de personal dedicado a carga manual superan con creces la inversión en automatización.</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-emerald-400 mb-2">Valor de la Interoperabilidad</h4>
+                    <p class="text-sm">Datos que fluyen en tiempo real, con transformación mínima desde la fuente oficial. Requiere tres capas: <strong class="text-white">técnica</strong> (protocolos API), <strong class="text-white">semántica</strong> (códigos comunes) y <strong class="text-white">organizacional</strong> (acuerdos legales entre áreas). Solo así se derriban los silos departamentales.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB 5: ESTADO AGÉNTICO -->
+<section id="tab-agentico" class="tab-content">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3">El Estado Agéntico</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">De una burocracia basada en procesos a una administración orientada a resultados, donde la IA razona y ejecuta dentro de límites éticos y legales.</p>
+        </div>
+        <!-- Concept -->
+        <div class="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-3xl p-8 mb-8">
+            <h3 class="text-lg font-bold text-white mb-4">¿Qué es el Estado Agéntico?</h3>
+            <p class="text-sm mb-4">Sistemas de software autónomos que no solo automatizan procesos, sino que poseen la capacidad de <strong class="text-blue-400">percibir</strong> situaciones complejas, <strong class="text-emerald-400">razonar</strong> sobre problemas que implican juicio y discreción, y <strong class="text-amber-400">ejecutar</strong> acciones para alcanzar resultados definidos.</p>
+            <p class="text-sm">Se sustenta en <strong class="text-white">12 capas funcionales</strong>: 6 de implementación (servicios proactivos, flujos auto-orquestados, políticas adaptativas, cumplimiento automatizado, respuesta a crisis, contratación inteligente) y 6 de habilitación (gobernanza, datos/privacidad, infraestructura, ciberseguridad, finanzas, cultura organizacional).</p>
+        </div>
+        <!-- Autonomy Levels -->
+        <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 mb-8 overflow-x-auto">
+            <h3 class="text-lg font-bold text-white mb-4">Niveles de Autonomía en la Gestión Pública</h3>
+            <table class="w-full text-sm">
+                <thead><tr class="text-left text-xs uppercase tracking-widest text-slate-500 border-b border-white/10">
+                    <th class="pb-3 pr-4">Nivel</th><th class="pb-3 pr-4">Capacidades</th><th class="pb-3">Aplicación Pública</th>
+                </tr></thead>
+                <tbody class="text-slate-300">
+                    <tr class="border-b border-white/5"><td class="py-3 pr-4 font-bold text-slate-500">0 — Manual</td><td class="pr-4">Procesamiento humano, sin asistencia digital</td><td>Mesa de entradas física, expedientes en papel</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-3 pr-4 font-bold text-blue-400">1 — Automatización</td><td class="pr-4">Reglas fijas y deterministas (RPA)</td><td>Validación de CUIL, enrutamiento de correos</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-3 pr-4 font-bold text-emerald-400">2 — Asistencia IA</td><td class="pr-4">IA analiza y sugiere clasificaciones al humano</td><td>Triaje de reclamos, detección de anomalías tributarias</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-3 pr-4 font-bold text-amber-400">3 — Flujos Agénticos</td><td class="pr-4">Agentes planifican y ejecutan bajo supervisión</td><td>Asistentes de trámites integrales, gestión de turnos</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-3 pr-4 font-bold text-orange-400">4 — Semiautónomo</td><td class="pr-4">Actuación independiente con salvaguardas</td><td>Defensa cibernética reactiva, drones de inspección</td></tr>
+                    <tr><td class="py-3 pr-4 font-bold text-red-400">5 — Autónomo</td><td class="pr-4">Aprendizaje entre dominios (fase de investigación)</td><td>Gobernanza macroeconómica autocrítica (teórico)</td></tr>
+                </tbody>
+            </table>
+            <p class="text-xs text-slate-500 mt-3">La mayoría de las democracias transitan entre niveles 1 y 2. El desafío es escalar al nivel 3 de forma sistémica.</p>
+        </div>
+        <!-- Stack -->
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4">Stack Tecnológico del Estado Agéntico</h3>
+                <div class="space-y-3">
+                    <div class="flex gap-3 items-start"><div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold shrink-0">1</div><div><div class="text-sm font-bold text-white">Interfaces Multimodales</div><p class="text-xs text-slate-400">Voz y texto en lenguaje natural — eliminar barreras de alfabetización</p></div></div>
+                    <div class="flex gap-3 items-start"><div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm font-bold shrink-0">2</div><div><div class="text-sm font-bold text-white">Infraestructura de Aplicación</div><p class="text-xs text-slate-400">LLMs locales (soberanía) o comerciales bajo contratos de privacidad</p></div></div>
+                    <div class="flex gap-3 items-start"><div class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 text-sm font-bold shrink-0">3</div><div><div class="text-sm font-bold text-white">Orquestación (MCP)</div><p class="text-xs text-slate-400">Model Context Protocol para conexión dinámica con bases de datos</p></div></div>
+                    <div class="flex gap-3 items-start"><div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 text-sm font-bold shrink-0">4</div><div><div class="text-sm font-bold text-white">DPI Agéntico</div><p class="text-xs text-slate-400">Identidad y pago digitales operables por máquinas</p></div></div>
+                    <div class="flex gap-3 items-start"><div class="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400 text-sm font-bold shrink-0">5</div><div><div class="text-sm font-bold text-white">Cómputo Elástico</div><p class="text-xs text-slate-400">GPUs escalables según demanda de interacciones ciudadanas</p></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB 6: DESAFÍOS 2026 -->
+<section id="tab-desafios" class="tab-content">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3">Desafíos 2026</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">La "tormenta perfecta": obsolescencia técnica, brecha de talento y marcos regulatorios del año 2000 frente a amenazas de IA del futuro.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-red-500/5 border border-red-500/20 rounded-3xl p-6 card-hover">
+                <div class="text-3xl mb-3">🧠</div>
+                <h3 class="text-lg font-bold text-red-400 mb-2">Crisis de Talento</h3>
+                <p class="text-sm mb-3">8 de cada 10 gobiernos consideran inadecuada la formación TIC de su personal. Solo el 16% resuelve problemas informáticos internamente.</p>
+                <p class="text-xs text-slate-500">La competencia con el sector privado por perfiles analíticos es una barrera transversal. Sin recambio generacional, el Estado será consumidor pasivo de tecnología.</p>
+            </div>
+            <div class="bg-amber-500/5 border border-amber-500/20 rounded-3xl p-6 card-hover">
+                <div class="text-3xl mb-3">🔒</div>
+                <h3 class="text-lg font-bold text-amber-400 mb-2">Ciberseguridad</h3>
+                <p class="text-sm mb-3">Solo el <strong class="text-white">13.5%</strong> de los gobiernos locales tiene equipos dedicados. Los ciberataques en LATAM son un 39% más frecuentes que el promedio global.</p>
+                <p class="text-xs text-slate-500">Hacia 2026: inyección de prompts en agentes públicos, deepfakes para suplantación en trámites, y solo 21.6% usa firma digital.</p>
+            </div>
+            <div class="bg-blue-500/5 border border-blue-500/20 rounded-3xl p-6 card-hover">
+                <div class="text-3xl mb-3">📄</div>
+                <h3 class="text-lg font-bold text-blue-400 mb-2">Sistemas Heredados</h3>
+                <p class="text-sm mb-3">Solo el <strong class="text-white">7.5%</strong> de los municipios tiene expediente electrónico con nivel significativo. La convivencia papel + digital anula beneficios.</p>
+                <p class="text-xs text-slate-500">La Ley de Datos Personales vigente (25.326) es del año 2000 — anterior al auge de la IA — y resulta insuficiente para proteger derechos ciudadanos.</p>
+            </div>
+        </div>
+        <!-- Digitalization table -->
+        <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 mb-8">
+            <h3 class="text-lg font-bold text-white mb-4">Estado de la Digitalización en Municipios</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center p-4"><div class="text-3xl font-black text-blue-400 mb-1">70%</div><div class="text-xs text-slate-400">Portal web</div></div>
+                <div class="text-center p-4"><div class="text-3xl font-black text-amber-400 mb-1">&lt;20%</div><div class="text-xs text-slate-400">Expediente electrónico</div></div>
+                <div class="text-center p-4"><div class="text-3xl font-black text-red-400 mb-1">10%</div><div class="text-xs text-slate-400">Área Gobierno Abierto</div></div>
+                <div class="text-center p-4"><div class="text-3xl font-black text-emerald-400 mb-1">50%</div><div class="text-xs text-slate-400">Redes sociales para aportes</div></div>
+            </div>
+        </div>
+        <!-- Reform & INDAP -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4">📜 Reforma Ley de Datos Personales</h3>
+                <p class="text-xs text-slate-500 mb-3">Proyecto 1948-D-2025</p>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex gap-2"><span class="text-blue-400">▸</span><span><strong class="text-white">Datos biométricos</strong> como categoría sensible explícita</span></li>
+                    <li class="flex gap-2"><span class="text-blue-400">▸</span><span><strong class="text-white">Derecho a explicabilidad</strong> — impugnar razonamiento de IA</span></li>
+                    <li class="flex gap-2"><span class="text-blue-400">▸</span><span><strong class="text-white">Transferencias internacionales</strong> — criterios de protección adecuada</span></li>
+                    <li class="flex gap-2"><span class="text-blue-400">▸</span><span><strong class="text-white">Responsabilidad proactiva</strong> y privacidad por diseño</span></li>
+                </ul>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4">🗄️ INDAP — Infraestructura Nacional de Datos Públicos</h3>
+                <p class="text-sm mb-3">Catálogo de "Datos de Alto Valor" abiertos por defecto, con Perfil Nacional de Metadatos para que la información sea descubrible por agentes de IA.</p>
+                <p class="text-sm">De <strong class="text-white">silos departamentales</strong> a una <strong class="text-emerald-400">red de datos federados</strong>: la información se mantiene en su origen pero es accesible mediante protocolos estandarizados. Un agente de salud podría validar cobertura social consultando bases de diferentes jurisdicciones sin transferir archivos.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB 7: DEMOCRACIA IA -->
+<section id="tab-democracia" class="tab-content">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3">Democracia e IA</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">De consultas episódicas a diálogo continuo: la IA puede hacer la participación ciudadana más representativa, menos polarizada y más escalable.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover">
+                <div class="text-3xl mb-3">🗣️</div>
+                <h3 class="text-lg font-bold text-white mb-3">Deliberación Digital Masiva</h3>
+                <p class="text-sm mb-3">Herramientas basadas en IA (Pol.is, Decide Madrid) procesan miles de comentarios ciudadanos, agrupan opiniones por afinidad y destacan puntos de consenso automáticamente.</p>
+                <p class="text-sm text-slate-500">La IA actúa como <strong class="text-emerald-400">facilitador neutral</strong> que tiende puentes entre posturas divergentes, haciendo el debate más rico y menos polarizado.</p>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover">
+                <div class="text-3xl mb-3">📊</div>
+                <h3 class="text-lg font-bold text-white mb-3">Representatividad por IA</h3>
+                <p class="text-sm mb-3">La participación digital tiene sesgo: generalmente jóvenes, urbanos, con acceso a tecnología. La IA puede medir representatividad contra datos censales en tiempo real.</p>
+                <p class="text-sm text-slate-500">Si un sector (ej. adultos mayores rurales) no está siendo escuchado, el sistema activa <strong class="text-amber-400">alertas para esfuerzos de vinculación presencial</strong>.</p>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover">
+                <div class="text-3xl mb-3">🛡️</div>
+                <h3 class="text-lg font-bold text-white mb-3">Contra la Desinformación Electoral</h3>
+                <p class="text-sm mb-3">IA generativa puede producir desinformación a escala masiva. Chatbots para diseminar información falsa y deepfakes en campañas son amenazas concretas.</p>
+                <p class="text-sm text-slate-500">Mitigación: <strong class="text-blue-400">agentes de IA de verificación en tiempo real</strong> + educación digital y alfabetización en IA para la ciudadanía.</p>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover">
+                <div class="text-3xl mb-3">💰</div>
+                <h3 class="text-lg font-bold text-white mb-3">Contratación Pública Inteligente</h3>
+                <p class="text-sm mb-3">La contratación pública representa ~12% del PBI global. Agentes de IA transforman el proceso hacia la "Compra Agéntica".</p>
+                <ul class="space-y-1 text-xs text-slate-400">
+                    <li>▸ Inteligencia de mercado autónoma</li>
+                    <li>▸ Detección de colusión entre proveedores</li>
+                    <li>▸ Contratos inteligentes con pagos automáticos por hitos</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Recommendations -->
+        <div class="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-3xl p-8">
+            <h3 class="text-lg font-bold text-white mb-4">🎯 Recomendaciones Estratégicas para el Fortalecimiento Federal</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="flex gap-3"><div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold shrink-0">1</div><div><div class="text-sm font-bold text-white">Cerrar la Brecha Digital Básica</div><p class="text-xs text-slate-400">Fibra óptica y satelital para municipios &lt;10,000 hab. Sin conectividad no hay Estado Agéntico.</p></div></div>
+                <div class="flex gap-3"><div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm font-bold shrink-0">2</div><div><div class="text-sm font-bold text-white">Ecosistema GovTech Local</div><p class="text-xs text-slate-400">IA de código abierto + startups locales. Argentina lidera en contratación de talento IA (+26%).</p></div></div>
+                <div class="flex gap-3"><div class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 text-sm font-bold shrink-0">3</div><div><div class="text-sm font-bold text-white">Institucionalizar Ciberseguridad</div><p class="text-xs text-slate-400">CERTs federales. Proteger bases de datos públicas como activos estratégicos.</p></div></div>
+                <div class="flex gap-3"><div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 text-sm font-bold shrink-0">4</div><div><div class="text-sm font-bold text-white">Capacitación y Recambio de Talento</div><p class="text-xs text-slate-400">Formación masiva + trayectorias de carrera atractivas para retener especialistas en el Estado.</p></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB: EXPLORACIÓN DE DATASETS -->
+<section id="tab-datasets" class="tab-content">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3">Exploración de Datasets</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">Pipeline de descarga masiva que unifica 32 portales de datos abiertos de Argentina en un catálogo de 23,101 archivos y 63.3 GB.</p>
+        </div>
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+            <div class="stat-card card-hover text-center"><div class="text-3xl md:text-4xl font-black accent-blue mb-1">32</div><div class="text-[10px] font-bold text-white uppercase tracking-widest">Portales</div><p class="text-xs text-slate-500 mt-1">Nacional, Provincial, Municipal</p></div>
+            <div class="stat-card card-hover text-center"><div class="text-3xl md:text-4xl font-black accent-emerald mb-1">23,101</div><div class="text-[10px] font-bold text-white uppercase tracking-widest">Archivos</div><p class="text-xs text-slate-500 mt-1">Descargados y catalogados</p></div>
+            <div class="stat-card card-hover text-center"><div class="text-3xl md:text-4xl font-black accent-amber mb-1">63.3 GB</div><div class="text-[10px] font-bold text-white uppercase tracking-widest">Tamaño Total</div><p class="text-xs text-slate-500 mt-1">Datos procesables</p></div>
+            <div class="stat-card card-hover text-center"><div class="text-3xl md:text-4xl font-black text-purple-400 mb-1">18</div><div class="text-[10px] font-bold text-white uppercase tracking-widest">Formatos</div><p class="text-xs text-slate-500 mt-1">CSV, Excel, JSON, Shapefiles…</p></div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Formats Chart -->
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4">Distribución por Formato</h3>
+                <div style="height:300px;"><canvas id="chart-formatos"></canvas></div>
+            </div>
+            <!-- Top Portals -->
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 lg:col-span-2">
+                <h3 class="text-lg font-bold text-white mb-4">Top 10 Portales por Volumen de Archivos</h3>
+                <div style="height:300px;"><canvas id="chart-portales"></canvas></div>
+            </div>
+        </div>
+        <!-- Full Portal Table -->
+        <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 mb-8 overflow-x-auto">
+            <h3 class="text-lg font-bold text-white mb-4">Catálogo Completo de Portales</h3>
+            <table class="w-full text-sm">
+                <thead><tr class="text-left text-xs uppercase tracking-widest text-slate-500 border-b border-white/10">
+                    <th class="pb-3 pr-4">Portal</th><th class="pb-3 pr-4">Nivel</th><th class="pb-3 pr-4">Tipo</th><th class="pb-3 pr-4 text-right">Archivos</th><th class="pb-3 text-right">Tamaño</th>
+                </tr></thead>
+                <tbody class="text-slate-300">
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">INDEC</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-500/10 text-amber-400">SPA Scraping</span></td><td class="text-right">6,669</td><td class="text-right">9.7 GB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">datos.gob.ar</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">5,735</td><td class="text-right">20.3 GB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Entre Ríos</td><td>Provincial</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">2,130</td><td class="text-right">163.7 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Energía</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">1,242</td><td class="text-right">15.6 GB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Rosario</td><td>Municipal</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-500/10 text-emerald-400">DKAN</span></td><td class="text-right">1,120</td><td class="text-right">840.2 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Tucumán</td><td>Provincial</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">1,104</td><td class="text-right">402.0 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Mendoza (Prov.)</td><td>Provincial</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">638</td><td class="text-right">533.3 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Mendoza (Ciudad)</td><td>Municipal</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">567</td><td class="text-right">525.2 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Justicia</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">469</td><td class="text-right">2.7 GB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Producción</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">458</td><td class="text-right">1.7 GB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">PBA</td><td>Provincial</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">357</td><td class="text-right">664.3 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Salud</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">336</td><td class="text-right">2.3 GB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">MAGyP</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">344</td><td class="text-right">354.0 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">HCDN</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">202</td><td class="text-right">371.1 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Transporte</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">192</td><td class="text-right">1.6 GB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Senado</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-500/10 text-amber-400">Web Scraping</span></td><td class="text-right">185</td><td class="text-right">6.1 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Presupuesto Abierto</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-purple-500/10 text-purple-400">Repo Directo</span></td><td class="text-right">160</td><td class="text-right">2.4 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">ACUMAR</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">130</td><td class="text-right">533.1 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">CABA</td><td>Municipal</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">108</td><td class="text-right">1.7 GB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">BCRA</td><td>Nacional</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-cyan-500/10 text-cyan-400">REST API</span></td><td class="text-right">59</td><td class="text-right">51.4 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Corrientes</td><td>Municipal</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">127</td><td class="text-right">138.0 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">Neuquén</td><td>Provincial</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/10 text-blue-400">CKAN</span></td><td class="text-right">27</td><td class="text-right">20.1 MB</td></tr>
+                    <tr class="border-b border-white/5"><td class="py-2 pr-4 font-medium text-white">BA Compras (OCDS)</td><td>Municipal</td><td><span class="px-2 py-0.5 text-[10px] rounded-full bg-purple-500/10 text-purple-400">CDN Directo</span></td><td class="text-right">5</td><td class="text-right">1.4 GB</td></tr>
+                    <tr><td class="py-2 pr-4 font-bold text-white">TOTAL</td><td></td><td></td><td class="text-right font-bold text-white">23,101</td><td class="text-right font-bold text-white">63.3 GB</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Pipeline Info -->
+        <div class="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-3xl p-8">
+            <h3 class="text-lg font-bold text-white mb-4">⚙️ Pipeline CKAN v3.0</h3>
+            <p class="text-sm mb-4">Motor de descarga masiva con <strong class="text-white">asyncio + aiohttp</strong>, 32+ descargas simultáneas, resume automático y retry de errores. Soporta portales CKAN, DKAN, REST APIs y scraping especializado.</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center"><div class="text-2xl font-black text-blue-400">32+</div><div class="text-[10px] text-slate-500 uppercase tracking-widest">Descargas simultáneas</div></div>
+                <div class="text-center"><div class="text-2xl font-black text-emerald-400">34s</div><div class="text-[10px] text-slate-500 uppercase tracking-widest">Metadata Argentina</div></div>
+                <div class="text-center"><div class="text-2xl font-black text-amber-400">5</div><div class="text-[10px] text-slate-500 uppercase tracking-widest">Tipos de scraping</div></div>
+                <div class="text-center"><div class="text-2xl font-black text-purple-400">Auto</div><div class="text-[10px] text-slate-500 uppercase tracking-widest">Resume & Retry</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TAB: TECNOLOGÍAS -->
+<section id="tab-tecnologias" class="tab-content">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3">Laboratorio Colossus Lab</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">Prototipado de soluciones cívicas: las herramientas que construimos para materializar la modernización del Estado.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- Project Cards -->
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover group">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🤖</div>
+                <h3 class="text-lg font-bold text-white mb-2">Radar Normativo</h3>
+                <p class="text-sm text-slate-400 mb-4">Motor de búsqueda inteligente y análisis legislativo basado en IA y arquitectura RAG. Ordena y evalúa la normativa municipal con precisión.</p>
+                <div class="flex flex-wrap gap-2"><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">IA / RAG</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Python</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Legislativo</span></div>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover group">
+                <div class="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🇦🇷</div>
+                <h3 class="text-lg font-bold text-white mb-2">OpenArg</h3>
+                <p class="text-sm text-slate-400 mb-4">Plataforma de Inteligencia sobre Datos Abiertos de Argentina — Multi-agent AI powered by Gemini 2.5. El corazón de este dashboard.</p>
+                <div class="flex flex-wrap gap-2"><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Open Data</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Multi-Agent AI</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Gemini</span></div>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover group">
+                <div class="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">⚡</div>
+                <h3 class="text-lg font-bold text-white mb-2">Swap Cuántico</h3>
+                <p class="text-sm text-slate-400 mb-4">Tecnología para compra/venta automática de inmuebles/muebles y actualización de registros públicos.</p>
+                <div class="flex flex-wrap gap-2"><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">Smart Contracts</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">PropTech</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">Automation</span></div>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover group">
+                <div class="w-12 h-12 rounded-2xl bg-pink-500/10 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">👥</div>
+                <h3 class="text-lg font-bold text-white mb-2">Argentina Gemelo Digital</h3>
+                <p class="text-sm text-slate-400 mb-4">Simulación de población sintética para testeo de políticas públicas antes de implementarlas.</p>
+                <div class="flex flex-wrap gap-2"><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-pink-500/10 text-pink-400 border border-pink-500/20">Simulación</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-pink-500/10 text-pink-400 border border-pink-500/20">Big Data</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-pink-500/10 text-pink-400 border border-pink-500/20">GovTech</span></div>
+            </div>
+            <a href="https://www.Leydeglaciares.tech" target="_blank" class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover group block">
+                <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🏔️</div>
+                <h3 class="text-lg font-bold text-white mb-2">Dashboard Glaciares & Minería</h3>
+                <p class="text-sm text-slate-400 mb-4">Inteligencia geoespacial: 16,968 glaciares + 906 proyectos mineros. Mapa interactivo con ColossusAI powered by Gemini.</p>
+                <div class="flex flex-wrap gap-2"><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">GeoIntel</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Leaflet</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">ESG</span></div>
+            </a>
+            <a href="https://www.futuroytrabajo.tech/" target="_blank" class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover group block">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🧠</div>
+                <h3 class="text-lg font-bold text-white mb-2">Futuro y Trabajo IA</h3>
+                <p class="text-sm text-slate-400 mb-4">Impacto de la IA Generativa en el mercado laboral argentino. Framework de Anthropic (2026) cruzado con INDEC y OCDE.</p>
+                <div class="flex flex-wrap gap-2"><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">IA Generativa</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">Mercado Laboral</span><span class="px-2 py-1 text-[10px] font-bold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">Anthropic</span></div>
+            </a>
+        </div>
+        <!-- Mission -->
+        <div class="max-w-4xl mx-auto bg-gradient-to-r from-blue-500/10 to-emerald-500/10 border border-blue-500/20 rounded-3xl p-8 text-center">
+            <p class="text-xl md:text-2xl text-white font-bold italic mb-4">"Incidimos en la discusión pública con la finalidad de definir una estrategia de desarrollo para Argentina basada en sus personas y recursos potenciados por la tecnología."</p>
+            <p class="text-sm text-slate-400">Colossus Lab — Comunidad de Participación Ciudadana</p>
+            <a href="https://www.colossuslab.tech" target="_blank" class="inline-block mt-6 px-8 py-3 bg-blue-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs hover:scale-105 transition-transform">Visitar ColossusLab.tech →</a>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/5 py-8 text-center text-xs text-slate-600">
+    <p>OpenArg Dashboard — <strong class="text-slate-400">Laboratorio Colossus</strong> · 2026</p>
+    <p class="mt-1">Fuentes: INDEC, INTRA, CIPPEC (ITPP), IDAC, CAF-AdS-SIP, Agentic State Vision Paper</p>
+</footer>
+
+<script>
+// Tab system
+const chartsInitialized = {};
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-pill').forEach(p => { p.classList.remove('active'); p.classList.add('text-slate-400'); });
+    document.getElementById('tab-' + tabId).classList.add('active');
+    const pill = document.querySelector(`[data-tab="${tabId}"]`);
+    if (pill) { pill.classList.add('active'); pill.classList.remove('text-slate-400'); }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!chartsInitialized[tabId]) { initCharts(tabId); chartsInitialized[tabId] = true; }
+}
+
+function initCharts(tabId) {
+    if (tabId === 'transparencia') { initINTRA(); initITPP(); }
+    if (tabId === 'municipios') { initInfra(); initCapacidades(); }
+    if (tabId === 'datasets') { initFormatos(); initPortales(); }
+}
+
+function initFormatos() {
+    new Chart(document.getElementById('chart-formatos'), {
+        type: 'doughnut',
+        data: { labels: ['CSV','Excel','PDF','ZIP','JSON','Shapefile','Otros'], datasets: [{ data: [8261,6999,3572,2856,783,188,442], backgroundColor: ['#3B82F6','#10B981','#EF4444','#F59E0B','#8B5CF6','#06B6D4','#64748B'], borderWidth: 0 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 10 }, padding: 12 } } } }
+    });
+}
+
+function initPortales() {
+    new Chart(document.getElementById('chart-portales'), {
+        type: 'bar',
+        data: { labels: ['INDEC','datos.gob.ar','Entre Ríos','Energía','Rosario','Tucumán','Mendoza Prov','Mendoza Cd','Justicia','Producción'],
+            datasets: [{ label: 'Archivos', data: [6669,5735,2130,1242,1120,1104,638,567,469,458], backgroundColor: '#3B82F6', borderRadius: 4 }] },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+            scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, y: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } } } }
+    });
+}
+
+function initINTRA() {
+    const labels = ['CABA','Nación','Mendoza','Río Negro','Buenos Aires','La Pampa','Entre Ríos','T. del Fuego','Córdoba','Chubut','Santa Cruz','Santa Fe','Neuquén','Chaco','Jujuy','Catamarca','San Luis','La Rioja','Corrientes','Misiones','Tucumán','San Juan','Salta','Sgo. del Estero','Formosa'];
+    const data = [85.02,83.90,77.18,68.16,63.85,63.79,63.26,62.99,62.39,61.66,60.33,59.83,59.30,58.35,50.40,47.98,47.41,46.95,42.42,41.63,40.28,38.66,37.87,20.79,12.83];
+    const colors = data.map(v => v >= 70 ? '#10B981' : v >= 55 ? '#3B82F6' : v >= 45 ? '#F59E0B' : v >= 30 ? '#EF4444' : '#DC2626');
+    new Chart(document.getElementById('chart-intra'), {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'Puntaje INTRA', data, backgroundColor: colors, borderRadius: 4 }] },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+            scales: { x: { max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, y: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } } } }
+    });
+}
+
+function initITPP() {
+    const labels = ['Córdoba','Entre Ríos','Chaco','Neuquén','Mendoza','CABA','San Juan','Catamarca','Río Negro','La Pampa','Salta','Promedio'];
+    const data = [10,9.9,9.55,9,8.95,8.9,8.6,8.35,8.3,8.25,8.15,7.86];
+    const colors = data.map((v,i) => i === 11 ? '#F59E0B' : '#3B82F6');
+    new Chart(document.getElementById('chart-itpp'), {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'Puntaje ITPP (sobre 10)', data, backgroundColor: colors, borderRadius: 4 }] },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+            scales: { x: { max: 10, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, y: { ticks: { color: '#cbd5e1', font: { size: 11 } }, grid: { display: false } } } }
+    });
+}
+
+function initInfra() {
+    new Chart(document.getElementById('chart-infra'), {
+        type: 'bar',
+        data: { labels: ['>250,000 hab', '50,001-250,000', '<5,000 hab'],
+            datasets: [
+                { label: 'Servidores Físicos', data: [92,92,58], backgroundColor: '#3B82F6', borderRadius: 4 },
+                { label: 'Nube', data: [73,50,7.7], backgroundColor: '#10B981', borderRadius: 4 }
+            ] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#cbd5e1' } } },
+            scales: { y: { max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', callback: v => v+'%' } }, x: { ticks: { color: '#cbd5e1' }, grid: { display: false } } } }
+    });
+}
+
+function initCapacidades() {
+    new Chart(document.getElementById('chart-capacidades'), {
+        type: 'radar',
+        data: { labels: ['Área Moderniz.','Portal Web','Exp. Electrónico','Gob. Abierto','Apps Propias','Resuelve TI'],
+            datasets: [{ label: '% Municipios', data: [30,70,20,10,20,16], backgroundColor: 'rgba(59,130,246,0.2)', borderColor: '#3B82F6', pointBackgroundColor: '#3B82F6' }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#cbd5e1' } } },
+            scales: { r: { angleLines: { color: 'rgba(255,255,255,0.1)' }, grid: { color: 'rgba(255,255,255,0.1)' }, pointLabels: { color: '#cbd5e1', font: { size: 10 } }, ticks: { display: false }, suggestedMin: 0, suggestedMax: 100 } } }
+    });
+}
+
+// Navbar scroll
+window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    nav.style.borderBottomColor = window.scrollY > 50 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.03)';
+});
+</script>
+</body>
+</html>
