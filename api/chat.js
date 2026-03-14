@@ -6,6 +6,8 @@ const ALLOWED_ORIGINS = [
     'http://localhost:5500',
     'http://127.0.0.1:5500',
     'https://openarg.vercel.app',
+    'https://open-arg-dashboard.vercel.app',
+    'https://dashboard.openarg.org',
     'https://www.openarg.com.ar',
     'https://openarg.com.ar'
 ];
