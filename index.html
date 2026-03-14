@@ -37,6 +37,16 @@
         .stat-card:hover { border-color: rgba(59,130,246,0.4); }
         ::-webkit-scrollbar { height:4px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-thumb { background:#334155; border-radius:2px; }
 
+        .reveal { opacity:0; transform:translateY(24px); transition: opacity 0.7s cubic-bezier(.16,1,.3,1), transform 0.7s cubic-bezier(.16,1,.3,1); }
+        .reveal.visible { opacity:1; transform:translateY(0); }
+        .reveal-delay-1 { transition-delay:0.1s; } .reveal-delay-2 { transition-delay:0.2s; } .reveal-delay-3 { transition-delay:0.3s; } .reveal-delay-4 { transition-delay:0.4s; }
+        .download-btn { display:inline-flex; align-items:center; gap:10px; padding:14px 32px; background:linear-gradient(135deg, rgba(59,130,246,0.15), rgba(16,185,129,0.08)); color:#3B82F6; border:1px solid rgba(59,130,246,0.25); border-radius:14px; font-size:0.95rem; font-weight:700; text-decoration:none; cursor:pointer; box-shadow:0 4px 20px rgba(0,0,0,0.3); transition:all 0.25s ease; letter-spacing:0.02em; }
+        .download-btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(59,130,246,0.2); border-color:rgba(59,130,246,0.5); }
+        .download-btn .badge { font-size:0.7rem; font-weight:500; opacity:0.7; padding:2px 8px; background:rgba(59,130,246,0.12); border-radius:6px; }
+        .arch-layer { position:relative; padding:1.25rem; border-radius:1rem; transition: transform 0.3s, box-shadow 0.3s; }
+        .arch-layer:hover { transform:scale(1.02); box-shadow:0 0 20px rgba(59,130,246,0.15); }
+        .arch-connector { width:2px; height:20px; background:linear-gradient(180deg,rgba(59,130,246,0.4),rgba(16,185,129,0.4)); margin:0 auto; }
+
         /* Mobile hamburger menu */
         .mobile-menu-btn { display: none; }
         .mobile-tabs-overlay { display: none; }
@@ -71,9 +81,8 @@
         <div class="flex gap-1 overflow-x-auto pb-1" id="nav-tabs">
             <button onclick="switchTab('inicio')" class="tab-pill active px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap" data-tab="inicio">Inicio</button>
             <button onclick="switchTab('transparencia')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="transparencia">Transparencia y Datos</button>
-            <button onclick="switchTab('agentico')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="agentico">Estado Agéntico</button>
             <button onclick="switchTab('desafios')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="desafios">Desafíos 2026</button>
-            <button onclick="switchTab('democracia')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="democracia">Democracia IA</button>
+            <button onclick="switchTab('democracia')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="democracia">Democracia e IA Agéntica</button>
             <button onclick="switchTab('datasets')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="datasets">Datasets</button>
             <button onclick="switchTab('tecnologias')" class="tab-pill px-3 py-1.5 rounded-full text-xs font-bold text-slate-400 hover:text-white whitespace-nowrap" data-tab="tecnologias">Laboratorio Colossus Lab</button>
         </div>
@@ -89,35 +98,45 @@
         <div class="text-center mb-16 animate-fade-in-up">
             <div class="inline-block px-4 py-1.5 mb-6 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-widest rounded-full">Dashboard de Inteligencia Pública</div>
             <h1 class="text-3xl sm:text-4xl md:text-7xl font-black text-white leading-tight tracking-tighter mb-4 md:mb-6">
-                Modernizar el Estado <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-emerald-400 to-amber-400">es Democratizar.</span>
+                <span class="decrypt-text" data-text="Modernizar el Estado">Modernizar el Estado</span> <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-emerald-400 to-amber-400 decrypt-text" data-text="es Democratizar.">es Democratizar.</span>
             </h1>
             <p class="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto font-light leading-relaxed">
-                Argentina tiene 2,327 gobiernos locales. Solo el 30% tiene un área de modernización. Este dashboard cruza datos de transparencia, digitalización municipal e inteligencia artificial para trazar el mapa de la transformación pendiente.
+                Argentina tiene <span class="countup font-bold text-white" data-to="2327">0</span> gobiernos locales. Solo el <span class="countup font-bold text-white" data-to="30" data-suffix="%">0</span> tiene un área de modernización. Este dashboard cruza datos de transparencia, digitalización municipal e inteligencia artificial para trazar el mapa de la transformación pendiente.
             </p>
         </div>
 
         <!-- KPIs -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-            <div class="stat-card card-hover animate-fade-in-up delay-1">
-                <div class="text-3xl md:text-4xl font-black accent-blue mb-1">2,327</div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+            <div class="stat-card card-hover reveal reveal-delay-1">
+                <div class="text-3xl md:text-4xl font-black accent-blue mb-1"><span class="countup" data-to="2327" data-separator=".">0</span></div>
                 <div class="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Gobiernos Locales</div>
-                <p class="text-xs text-slate-500">80% tiene menos de 10,000 hab.</p>
+                <p class="text-xs text-slate-500"><span class="countup" data-to="80" data-suffix="%">0</span> tiene menos de 10,000 hab.</p>
             </div>
-            <div class="stat-card card-hover animate-fade-in-up delay-2">
-                <div class="text-3xl md:text-4xl font-black accent-emerald mb-1">54.3</div>
+            <div class="stat-card card-hover reveal reveal-delay-2">
+                <div class="text-3xl md:text-4xl font-black accent-emerald mb-1"><span class="countup" data-to="54.3" data-decimals="1">0</span></div>
                 <div class="text-[10px] font-bold text-white uppercase tracking-widest mb-1">INTRA Promedio</div>
                 <p class="text-xs text-slate-500">Transparencia sobre 100 pts.</p>
             </div>
-            <div class="stat-card card-hover animate-fade-in-up delay-3">
-                <div class="text-3xl md:text-4xl font-black accent-amber mb-1">80%</div>
+            <div class="stat-card card-hover reveal reveal-delay-3">
+                <div class="text-3xl md:text-4xl font-black accent-amber mb-1"><span class="countup" data-to="80" data-suffix="%">0</span></div>
                 <div class="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Formación Inadecuada</div>
                 <p class="text-xs text-slate-500">Personal TIC municipal.</p>
             </div>
-            <div class="stat-card card-hover animate-fade-in-up delay-4">
-                <div class="text-3xl md:text-4xl font-black text-red-400 mb-1">7.5%</div>
+            <div class="stat-card card-hover reveal reveal-delay-4">
+                <div class="text-3xl md:text-4xl font-black text-red-400 mb-1"><span class="countup" data-to="7.5" data-decimals="1" data-suffix="%">0</span></div>
                 <div class="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Expediente Electrónico</div>
                 <p class="text-xs text-slate-500">Municipios con nivel significativo.</p>
             </div>
+        </div>
+
+
+        <!-- PDF Download -->
+        <div class="flex justify-center mb-12 reveal">
+            <a href="informe-digitalizacion.pdf" download="Informe_Digitalizacion_Municipal_OpenArg.pdf" class="download-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                Descargar Informe — Digitalización Municipal
+                <span class="badge">PDF</span>
+            </a>
         </div>
 
         <!-- Synthesis -->
@@ -226,122 +245,6 @@
                 <div>
                     <h4 class="text-sm font-bold text-emerald-400 mb-2">Valor de la Interoperabilidad</h4>
                     <p class="text-sm">Requiere tres capas: <strong class="text-white">técnica</strong> (protocolos API), <strong class="text-white">semántica</strong> (códigos comunes) y <strong class="text-white">organizacional</strong> (acuerdos legales). Solo así se derriban los silos departamentales.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- TAB: ESTADO AGÉNTICO -->
-<section id="tab-agentico" class="tab-content">
-    <div class="max-w-7xl mx-auto px-4 py-8 md:py-12">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3">El Estado Agéntico</h2>
-            <p class="text-slate-400 max-w-2xl mx-auto">De una burocracia basada en procesos a una administración orientada a resultados, donde la IA razona y ejecuta dentro de límites éticos y legales.</p>
-        </div>
-        <!-- Concept -->
-        <div class="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-3xl p-6 md:p-8 mb-8">
-            <h3 class="text-lg font-bold text-white mb-4">¿Qué es el Estado Agéntico?</h3>
-            <p class="text-sm mb-4">Sistemas de software autónomos que no solo automatizan procesos, sino que poseen la capacidad de <strong class="text-blue-400">percibir</strong> situaciones complejas, <strong class="text-emerald-400">razonar</strong> sobre problemas que implican juicio y discreción, y <strong class="text-amber-400">ejecutar</strong> acciones para alcanzar resultados definidos.</p>
-            <p class="text-sm">Se sustenta en <strong class="text-white">12 capas funcionales</strong>: 6 de implementación y 6 de habilitación, organizadas en un framework integral.</p>
-        </div>
-        <!-- 12 Layers -->
-        <div class="mb-12">
-            <h3 class="text-xl font-black text-white mb-6 text-center">🏗️ Framework: 12 Capas Funcionales</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <h4 class="text-sm font-bold text-blue-400 mb-3 uppercase tracking-widest">Implementación (1-6)</h4>
-                    <div class="space-y-2">
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">1</div><div><div class="text-xs font-bold text-white">Diseño de Servicios / UX</div><p class="text-[10px] text-slate-400">De navegar portales a expresar necesidades en lenguaje natural</p></div></div>
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">2</div><div><div class="text-xs font-bold text-white">Flujos de Gobierno</div><p class="text-[10px] text-slate-400">Eficiencia administrativa y coordinación cross-boundary</p></div></div>
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">3</div><div><div class="text-xs font-bold text-white">Políticas y Regulación</div><p class="text-[10px] text-slate-400">"Leyes vivas" que se adaptan a resultados medibles</p></div></div>
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">4</div><div><div class="text-xs font-bold text-white">Cumplimiento Normativo</div><p class="text-[10px] text-slate-400">Supervisión a escala de máquina</p></div></div>
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">5</div><div><div class="text-xs font-bold text-white">Respuesta a Crisis</div><p class="text-[10px] text-slate-400">Acción rápida y coordinada mediante agentes autónomos</p></div></div>
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">6</div><div><div class="text-xs font-bold text-white">Contrataciones Públicas</div><p class="text-[10px] text-slate-400">Agentes que transforman la adquisición de bienes y servicios</p></div></div>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="text-sm font-bold text-emerald-400 mb-3 uppercase tracking-widest">Habilitación (7-12)</h4>
-                    <div class="space-y-2">
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">7</div><div><div class="text-xs font-bold text-white">Gobernanza de Agentes</div><p class="text-[10px] text-slate-400">Accountability, seguridad y reparación por diseño</p></div></div>
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">8</div><div><div class="text-xs font-bold text-white">Datos y Privacidad</div><p class="text-[10px] text-slate-400">Agentes como data stewards de la sociedad</p></div></div>
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">9</div><div><div class="text-xs font-bold text-white">Stack Tecnológico</div><p class="text-[10px] text-slate-400">Infraestructura de 5 capas (ver abajo)</p></div></div>
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">10</div><div><div class="text-xs font-bold text-white">Ciberseguridad</div><p class="text-[10px] text-slate-400">Enfoque "salud pública" ante compromisos endémicos</p></div></div>
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">11</div><div><div class="text-xs font-bold text-white">Finanzas Públicas</div><p class="text-[10px] text-slate-400">Contratación adaptativa y pricing basado en resultados</p></div></div>
-                        <div class="flex gap-3 items-start bg-white/[0.02] rounded-xl p-3"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">12</div><div><div class="text-xs font-bold text-white">Personas y Cultura</div><p class="text-[10px] text-slate-400">De cumplimiento de procesos a logro de resultados</p></div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Autonomy Levels -->
-        <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 mb-8 overflow-x-auto">
-            <h3 class="text-lg font-bold text-white mb-4">Niveles de Autonomía en la Gestión Pública</h3>
-            <table class="w-full text-sm min-w-[500px]">
-                <thead><tr class="text-left text-xs uppercase tracking-widest text-slate-500 border-b border-white/10">
-                    <th class="pb-3 pr-4">Nivel</th><th class="pb-3 pr-4">Capacidades</th><th class="pb-3">Aplicación</th>
-                </tr></thead>
-                <tbody class="text-slate-300">
-                    <tr class="border-b border-white/5"><td class="py-3 pr-4 font-bold text-slate-500">0 — Manual</td><td class="pr-4">Sin asistencia digital</td><td>Expedientes en papel</td></tr>
-                    <tr class="border-b border-white/5"><td class="py-3 pr-4 font-bold text-blue-400">1 — RPA</td><td class="pr-4">Reglas fijas y deterministas</td><td>Validación CUIL, enrutamiento</td></tr>
-                    <tr class="border-b border-white/5"><td class="py-3 pr-4 font-bold text-emerald-400">2 — IA Asistida</td><td class="pr-4">IA analiza y sugiere</td><td>Triaje reclamos, anomalías</td></tr>
-                    <tr class="border-b border-white/5"><td class="py-3 pr-4 font-bold text-amber-400">3 — Agéntico</td><td class="pr-4">Planifica y ejecuta bajo supervisión</td><td>Asistentes de trámites</td></tr>
-                    <tr class="border-b border-white/5"><td class="py-3 pr-4 font-bold text-orange-400">4 — Semi</td><td class="pr-4">Actuación con salvaguardas</td><td>Defensa cibernética reactiva</td></tr>
-                    <tr><td class="py-3 pr-4 font-bold text-red-400">5 — Autónomo</td><td class="pr-4">Aprendizaje cross-domain (teórico)</td><td>Gobernanza macro (futuro)</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- Governance + Risk -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
-                <h3 class="text-lg font-bold text-white mb-4">🛡️ Modelo de Gobernanza</h3>
-                <ul class="space-y-2 text-sm">
-                    <li class="flex gap-2"><span class="text-blue-400">▸</span><span><strong class="text-white">Marco Ético:</strong> fairness y opciones de salida hardwired</span></li>
-                    <li class="flex gap-2"><span class="text-blue-400">▸</span><span><strong class="text-white">Marco Legal:</strong> "poder digital" con responsabilidad clara</span></li>
-                    <li class="flex gap-2"><span class="text-blue-400">▸</span><span><strong class="text-white">Apelaciones:</strong> transparencia multinivel + "Human Override"</span></li>
-                    <li class="flex gap-2"><span class="text-blue-400">▸</span><span><strong class="text-white">Institucional:</strong> "Auditor Agents" de monitoreo en tiempo real</span></li>
-                    <li class="flex gap-2"><span class="text-blue-400">▸</span><span><strong class="text-white">Técnico:</strong> Identity Binding criptográfico + inspectabilidad</span></li>
-                </ul>
-            </div>
-            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6">
-                <h3 class="text-lg font-bold text-white mb-4">⚠️ Riesgos y Respuesta Inmune</h3>
-                <ul class="space-y-2 text-sm">
-                    <li class="flex gap-2"><span class="text-red-400">▸</span><span><strong class="text-white">Ataques cognitivos:</strong> manipulación de procesos de decisión</span></li>
-                    <li class="flex gap-2"><span class="text-red-400">▸</span><span><strong class="text-white">Suplantación:</strong> impersonación de agentes oficiales</span></li>
-                    <li class="flex gap-2"><span class="text-red-400">▸</span><span><strong class="text-white">Supply-chain:</strong> corrupción de modelos en la cadena</span></li>
-                    <li class="flex gap-2"><span class="text-red-400">▸</span><span><strong class="text-white">Movimiento lateral:</strong> compromiso cross-agent</span></li>
-                    <li class="flex gap-2"><span class="text-emerald-400">▸</span><span><strong class="text-white">Respuesta:</strong> aislamiento automático + seguridad variable</span></li>
-                </ul>
-            </div>
-        </div>
-        <!-- Tech Stack -->
-        <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 mb-8">
-            <h3 class="text-lg font-bold text-white mb-4">Stack Tecnológico (5 Capas)</h3>
-            <div class="space-y-3">
-                <div class="flex gap-3 items-start"><div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold shrink-0">1</div><div><div class="text-sm font-bold text-white">Interfaces Multimodales</div><p class="text-xs text-slate-400">Voz, texto en lenguaje natural, continuidad cross-platform</p></div></div>
-                <div class="flex gap-3 items-start"><div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm font-bold shrink-0">2</div><div><div class="text-sm font-bold text-white">Infraestructura de Aplicación</div><p class="text-xs text-slate-400">LLMs cognitivos con orquestación multi-modelo</p></div></div>
-                <div class="flex gap-3 items-start"><div class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 text-sm font-bold shrink-0">3</div><div><div class="text-sm font-bold text-white">Orquestación (MCP / A2A)</div><p class="text-xs text-slate-400">Model Context Protocol para comunicación agente-a-agente segura</p></div></div>
-                <div class="flex gap-3 items-start"><div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 text-sm font-bold shrink-0">4</div><div><div class="text-sm font-bold text-white">DPI Agéntico</div><p class="text-xs text-slate-400">Identidad, pagos y policy-as-code operables por máquinas</p></div></div>
-                <div class="flex gap-3 items-start"><div class="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400 text-sm font-bold shrink-0">5</div><div><div class="text-sm font-bold text-white">Cómputo Elástico</div><p class="text-xs text-slate-400">Cloud + hardware IA especializado escalable</p></div></div>
-            </div>
-        </div>
-        <!-- Pathways -->
-        <div class="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-3xl p-6">
-            <h3 class="text-lg font-bold text-white mb-4">🛤️ Rutas de Implementación</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="text-center p-4">
-                    <div class="text-2xl mb-2">🏢</div>
-                    <div class="text-xs font-bold text-white mb-1">Renta Media</div>
-                    <p class="text-[10px] text-slate-400">Competencia de plataformas: APIs abiertas + proveedores privados</p>
-                </div>
-                <div class="text-center p-4">
-                    <div class="text-2xl mb-2">🗣️</div>
-                    <div class="text-xs font-bold text-white mb-1">Renta Baja</div>
-                    <p class="text-[10px] text-slate-400">Voice-first: LLMs sobre datos no estructurados, servicios por teléfono</p>
-                </div>
-                <div class="text-center p-4">
-                    <div class="text-2xl mb-2">📈</div>
-                    <div class="text-xs font-bold text-white mb-1">Progresión General</div>
-                    <p class="text-[10px] text-slate-400">Info Agents → Transaccionales → Orquestación Proactiva</p>
                 </div>
             </div>
         </div>
@@ -461,45 +364,148 @@
     </div>
 </section>
 
-<!-- TAB 7: DEMOCRACIA IA -->
+<!-- TAB: DEMOCRACIA E IA AGÉNTICA -->
 <section id="tab-democracia" class="tab-content">
-    <div class="max-w-7xl mx-auto px-4 py-12">
+    <div class="max-w-7xl mx-auto px-4 py-8 md:py-12">
         <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3">Democracia e IA</h2>
-            <p class="text-slate-400 max-w-2xl mx-auto">De consultas episódicas a diálogo continuo: la IA puede hacer la participación ciudadana más representativa, menos polarizada y más escalable.</p>
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3 decrypt-text" data-text="Democracia e IA Agéntica">Democracia e IA Agéntica</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">De consultas episódicas a diálogo continuo. De burocracia de procesos a administración orientada a resultados. La IA puede hacer la participación ciudadana más representativa y el Estado más eficiente.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover">
+
+        <!-- IA para la Democracia -->
+        <h3 class="text-xl font-bold text-white mb-6 reveal">🗳️ IA para la Democracia</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover reveal reveal-delay-1">
                 <div class="text-3xl mb-3">🗣️</div>
-                <h3 class="text-lg font-bold text-white mb-3">Deliberación Digital Masiva</h3>
+                <h4 class="text-lg font-bold text-white mb-3">Deliberación Digital Masiva</h4>
                 <p class="text-sm mb-3">Herramientas basadas en IA (Pol.is, Decide Madrid) procesan miles de comentarios ciudadanos, agrupan opiniones por afinidad y destacan puntos de consenso automáticamente.</p>
-                <p class="text-sm text-slate-500">La IA actúa como <strong class="text-emerald-400">facilitador neutral</strong> que tiende puentes entre posturas divergentes, haciendo el debate más rico y menos polarizado.</p>
+                <p class="text-sm text-slate-500">La IA actúa como <strong class="text-emerald-400">facilitador neutral</strong> que tiende puentes entre posturas divergentes.</p>
             </div>
-            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover">
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover reveal reveal-delay-2">
                 <div class="text-3xl mb-3">📊</div>
-                <h3 class="text-lg font-bold text-white mb-3">Representatividad por IA</h3>
+                <h4 class="text-lg font-bold text-white mb-3">Representatividad por IA</h4>
                 <p class="text-sm mb-3">La participación digital tiene sesgo: generalmente jóvenes, urbanos, con acceso a tecnología. La IA puede medir representatividad contra datos censales en tiempo real.</p>
-                <p class="text-sm text-slate-500">Si un sector (ej. adultos mayores rurales) no está siendo escuchado, el sistema activa <strong class="text-amber-400">alertas para esfuerzos de vinculación presencial</strong>.</p>
+                <p class="text-sm text-slate-500">Si un sector no está representado, el sistema activa <strong class="text-amber-400">alertas para vinculación presencial</strong>.</p>
             </div>
-            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover">
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover reveal reveal-delay-3">
                 <div class="text-3xl mb-3">🛡️</div>
-                <h3 class="text-lg font-bold text-white mb-3">Contra la Desinformación Electoral</h3>
-                <p class="text-sm mb-3">IA generativa puede producir desinformación a escala masiva. Chatbots para diseminar información falsa y deepfakes en campañas son amenazas concretas.</p>
-                <p class="text-sm text-slate-500">Mitigación: <strong class="text-blue-400">agentes de IA de verificación en tiempo real</strong> + educación digital y alfabetización en IA para la ciudadanía.</p>
+                <h4 class="text-lg font-bold text-white mb-3">Contra la Desinformación Electoral</h4>
+                <p class="text-sm mb-3">IA generativa puede producir desinformación masiva. Deepfakes en campañas son amenazas concretas.</p>
+                <p class="text-sm text-slate-500">Mitigación: <strong class="text-blue-400">agentes de IA de verificación en tiempo real</strong> + alfabetización digital ciudadana.</p>
             </div>
-            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover">
+            <div class="bg-white/[0.03] border border-white/10 rounded-3xl p-6 card-hover reveal reveal-delay-4">
                 <div class="text-3xl mb-3">💰</div>
-                <h3 class="text-lg font-bold text-white mb-3">Contratación Pública Inteligente</h3>
-                <p class="text-sm mb-3">La contratación pública representa ~12% del PBI global. Agentes de IA transforman el proceso hacia la "Compra Agéntica".</p>
+                <h4 class="text-lg font-bold text-white mb-3">Contratación Pública Inteligente</h4>
+                <p class="text-sm mb-3">La contratación pública representa ~12% del PBI global. Agentes de IA transforman hacia la "Compra Agéntica".</p>
                 <ul class="space-y-1 text-xs text-slate-400">
-                    <li>▸ Inteligencia de mercado autónoma</li>
                     <li>▸ Detección de colusión entre proveedores</li>
                     <li>▸ Contratos inteligentes con pagos automáticos por hitos</li>
                 </ul>
             </div>
         </div>
-        <!-- Recommendations -->
-        <div class="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-3xl p-8">
+
+        <!-- El Estado Agéntico -->
+        <h3 class="text-xl font-bold text-white mb-2 reveal">🤖 El Estado Agéntico</h3>
+        <p class="text-slate-400 mb-8 reveal">Sistemas que <strong class="text-blue-400">perciben</strong>, <strong class="text-emerald-400">razonan</strong> y <strong class="text-amber-400">ejecutan</strong> dentro de límites éticos.</p>
+
+        <!-- 12 Layers compact -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-5 reveal">
+                <div class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-4">Implementación (1-6)</div>
+                <div class="space-y-2.5">
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">1</div><div><span class="text-xs font-bold text-white">UX —</span> <span class="text-[10px] text-slate-400">Lenguaje natural</span></div></div>
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">2</div><div><span class="text-xs font-bold text-white">Flujos —</span> <span class="text-[10px] text-slate-400">Coordinación cross-boundary</span></div></div>
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">3</div><div><span class="text-xs font-bold text-white">Políticas —</span> <span class="text-[10px] text-slate-400">"Leyes vivas" adaptativas</span></div></div>
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">4</div><div><span class="text-xs font-bold text-white">Cumplimiento —</span> <span class="text-[10px] text-slate-400">Supervisión a escala máquina</span></div></div>
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">5</div><div><span class="text-xs font-bold text-white">Crisis —</span> <span class="text-[10px] text-slate-400">Agentes autónomos coordinados</span></div></div>
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold shrink-0">6</div><div><span class="text-xs font-bold text-white">Compras —</span> <span class="text-[10px] text-slate-400">Contratación inteligente</span></div></div>
+                </div>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-5 reveal reveal-delay-2">
+                <div class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-4">Habilitación (7-12)</div>
+                <div class="space-y-2.5">
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">7</div><div><span class="text-xs font-bold text-white">Gobernanza —</span> <span class="text-[10px] text-slate-400">Accountability por diseño</span></div></div>
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">8</div><div><span class="text-xs font-bold text-white">Datos —</span> <span class="text-[10px] text-slate-400">Agentes como data stewards</span></div></div>
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">9</div><div><span class="text-xs font-bold text-white">Stack —</span> <span class="text-[10px] text-slate-400">5 capas de infraestructura</span></div></div>
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">10</div><div><span class="text-xs font-bold text-white">Ciber —</span> <span class="text-[10px] text-slate-400">Enfoque "salud pública"</span></div></div>
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">11</div><div><span class="text-xs font-bold text-white">Finanzas —</span> <span class="text-[10px] text-slate-400">Pricing por resultados</span></div></div>
+                    <div class="flex gap-3 items-center"><div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold shrink-0">12</div><div><span class="text-xs font-bold text-white">Cultura —</span> <span class="text-[10px] text-slate-400">De procesos a resultados</span></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Autonomy Levels + Governance side by side -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-5 reveal">
+                <h4 class="text-sm font-bold text-white mb-4">Niveles de Autonomía</h4>
+                <table class="w-full text-xs">
+                    <tbody class="divide-y divide-white/5">
+                        <tr><td class="py-2 text-slate-500 w-8">0</td><td class="py-2 text-white">Manual</td><td class="py-2 text-slate-400">Papel</td></tr>
+                        <tr><td class="py-2 text-blue-400 font-bold">1</td><td class="py-2 text-white">RPA</td><td class="py-2 text-slate-400">Reglas fijas</td></tr>
+                        <tr><td class="py-2 text-blue-400 font-bold">2</td><td class="py-2 text-white">IA Asistida</td><td class="py-2 text-slate-400">Sugiere</td></tr>
+                        <tr><td class="py-2 text-emerald-400 font-bold">3</td><td class="py-2 text-white">Agéntico</td><td class="py-2 text-slate-400">Ejecuta bajo supervisión</td></tr>
+                        <tr><td class="py-2 text-amber-400 font-bold">4</td><td class="py-2 text-white">Semi</td><td class="py-2 text-slate-400">Salvaguardas automáticas</td></tr>
+                        <tr><td class="py-2 text-red-400 font-bold">5</td><td class="py-2 text-white">Autónomo</td><td class="py-2 text-slate-400">Teórico</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-5 reveal reveal-delay-2">
+                <h4 class="text-sm font-bold text-white mb-4">🏛️ Gobernanza + Riesgos</h4>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li>▸ <strong class="text-white">Marco Ético:</strong> fairness + Human Override</li>
+                    <li>▸ <strong class="text-white">Legal:</strong> "poder digital" con responsabilidad</li>
+                    <li>▸ <strong class="text-white">Institucional:</strong> Auditor Agents en vivo</li>
+                    <li>▸ <strong class="text-white">Técnico:</strong> Identity Binding cripto</li>
+                    <li class="text-red-400">▸ <strong class="text-white">Riesgos:</strong> ataques cognitivos, suplantación, supply-chain</li>
+                    <li class="text-amber-400">▸ <strong class="text-white">Respuesta:</strong> aislamiento automático + seguridad variable</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Arquitectura del Estado del Futuro -->
+        <h3 class="text-xl font-bold text-white mb-8 text-center reveal">🏗️ Arquitectura del Estado Argentino del Futuro</h3>
+        <div class="max-w-3xl mx-auto mb-12">
+            <div class="arch-layer bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 text-center mb-0 reveal">
+                <div class="text-2xl mb-1">👤</div>
+                <div class="text-sm font-bold text-white">Interfaz Ciudadana</div>
+                <p class="text-[10px] text-slate-400">Un único portal + lenguaje natural. Trámites sin burocracia.</p>
+                <div class="flex gap-2 justify-center mt-2"><span class="text-[9px] px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400">Chat IA</span><span class="text-[9px] px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400">Voz</span><span class="text-[9px] px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400">Presencial digital</span></div>
+            </div>
+            <div class="arch-connector"></div>
+            <div class="arch-layer bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 text-center reveal reveal-delay-1">
+                <div class="text-2xl mb-1">🧠</div>
+                <div class="text-sm font-bold text-white">Orquestación Agéntica (MCPs + A2A)</div>
+                <p class="text-[10px] text-slate-400">Agentes especializados que razonan, planifican y coordinan entre sí</p>
+                <div class="grid grid-cols-3 gap-2 mt-3">
+                    <div class="text-center p-2 bg-white/[0.02] rounded-lg"><div class="text-lg">📋</div><div class="text-[9px] text-white font-bold">Agente Trámites</div></div>
+                    <div class="text-center p-2 bg-white/[0.02] rounded-lg"><div class="text-lg">💰</div><div class="text-[9px] text-white font-bold">Agente Fiscal</div></div>
+                    <div class="text-center p-2 bg-white/[0.02] rounded-lg"><div class="text-lg">🏥</div><div class="text-[9px] text-white font-bold">Agente Salud</div></div>
+                </div>
+            </div>
+            <div class="arch-connector"></div>
+            <div class="arch-layer bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 text-center reveal reveal-delay-2">
+                <div class="text-2xl mb-1">🗄️</div>
+                <div class="text-sm font-bold text-white">Infraestructura de Datos Federados (INDAP)</div>
+                <p class="text-[10px] text-slate-400">Datos de Alto Valor abiertos por defecto + Perfil Nacional de Metadatos</p>
+                <div class="flex gap-2 justify-center mt-2"><span class="text-[9px] px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">APIs estándar</span><span class="text-[9px] px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">Interoperabilidad</span><span class="text-[9px] px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">Soberanía</span></div>
+            </div>
+            <div class="arch-connector"></div>
+            <div class="arch-layer bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 text-center reveal reveal-delay-3">
+                <div class="text-2xl mb-1">⚖️</div>
+                <div class="text-sm font-bold text-white">Gobernanza y Ciberseguridad</div>
+                <p class="text-[10px] text-slate-400">Auditor Agents + Identity Binding + Human Override + DPI Agéntico</p>
+            </div>
+            <div class="arch-connector"></div>
+            <div class="arch-layer bg-gradient-to-r from-red-500/10 to-rose-500/10 border border-red-500/20 text-center reveal reveal-delay-4">
+                <div class="text-2xl mb-1">🏗️</div>
+                <div class="text-sm font-bold text-white">Infraestructura Base</div>
+                <p class="text-[10px] text-slate-400">Conectividad universal + cómputo elástico + LLMs soberanos o bajo contrato de privacidad</p>
+                <div class="flex gap-2 justify-center mt-2"><span class="text-[9px] px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-400">Fibra Óptica</span><span class="text-[9px] px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-400">GPUs</span><span class="text-[9px] px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-400">Cloud Soberano</span></div>
+            </div>
+        </div>
+
+        <!-- Recomendaciones -->
+        <div class="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-3xl p-8 reveal">
             <h3 class="text-lg font-bold text-white mb-4">🎯 Recomendaciones Estratégicas para el Fortalecimiento Federal</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="flex gap-3"><div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold shrink-0">1</div><div><div class="text-sm font-bold text-white">Cerrar la Brecha Digital Básica</div><p class="text-xs text-slate-400">Fibra óptica y satelital para municipios &lt;10,000 hab. Sin conectividad no hay Estado Agéntico.</p></div></div>
@@ -750,6 +756,80 @@ function initCapacidades() {
 window.addEventListener('scroll', () => {
     const nav = document.getElementById('navbar');
     nav.style.borderBottomColor = window.scrollY > 50 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.03)';
+});
+
+// ── CountUp Animation ──
+function animateCountUp(el) {
+    if (el.dataset.animated === '1') return;
+    el.dataset.animated = '1';
+    const target = parseFloat(el.dataset.to);
+    const decimals = parseInt(el.dataset.decimals || '0');
+    const suffix = el.dataset.suffix || '';
+    const separator = el.dataset.separator || '';
+    const duration = 1800;
+    const start = performance.now();
+    function ease(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
+    function tick(now) {
+        const t = Math.min((now - start) / duration, 1);
+        let display = (target * ease(t)).toFixed(decimals);
+        if (separator) display = display.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+        el.textContent = display + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
+// ── Decrypt Text Animation ──
+function animateDecrypt(el) {
+    if (el.dataset.animated === '1') return;
+    el.dataset.animated = '1';
+    const finalText = el.dataset.text || el.textContent;
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&';
+    const len = finalText.length;
+    let revealed = 0;
+    const interval = setInterval(() => {
+        let out = '';
+        for (let i = 0; i < len; i++) {
+            if (finalText[i] === ' ') { out += ' '; continue; }
+            out += i < revealed ? finalText[i] : chars[Math.floor(Math.random() * chars.length)];
+        }
+        el.textContent = out;
+        revealed += Math.ceil(len / 20);
+        if (revealed >= len) { el.textContent = finalText; clearInterval(interval); }
+    }, 30);
+}
+
+// ── Scroll Reveal Observer ──
+document.addEventListener('DOMContentLoaded', () => {
+    const revealObs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    const countObs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { animateCountUp(e.target); countObs.unobserve(e.target); } });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.countup').forEach(el => countObs.observe(el));
+
+    const decryptObs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { animateDecrypt(e.target); decryptObs.unobserve(e.target); } });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.decrypt-text').forEach(el => decryptObs.observe(el));
+
+    // Re-trigger on tab switch
+    const origSwitch = window.switchTab;
+    if (origSwitch) {
+        window.switchTab = function(tabId) {
+            origSwitch.call(this, tabId);
+            setTimeout(() => {
+                const tab = document.getElementById('tab-' + tabId);
+                if (!tab) return;
+                tab.querySelectorAll('.reveal:not(.visible)').forEach(el => revealObs.observe(el));
+                tab.querySelectorAll('.countup:not([data-animated="1"])').forEach(el => countObs.observe(el));
+                tab.querySelectorAll('.decrypt-text:not([data-animated="1"])').forEach(el => decryptObs.observe(el));
+            }, 50);
+        };
+    }
 });
 </script>
 </body>
