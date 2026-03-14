@@ -1,0 +1,9 @@
+{
+  "name": "openarg-dashboard",
+  "version": "1.0.0",
+  "description": "OpenArg — Inteligencia sobre Datos Abiertos de Argentina",
+  "private": true,
+  "dependencies": {
+    "@google/generative-ai": "^0.24.0"
+  }
+}
