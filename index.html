@@ -297,9 +297,13 @@
             #openarg-chat-fab svg { width: 22px; height: 22px; }
             #openarg-chat-window {
                 bottom: 0; right: 0; left: 0; width: 100%; max-width: 100%;
-                height: 100vh; max-height: 100vh; border-radius: 0;
+                height: calc(100dvh - env(safe-area-inset-top, 0px));
+                max-height: calc(100dvh - env(safe-area-inset-top, 0px));
+                border-radius: 0;
                 transform-origin: bottom center;
+                padding-bottom: env(safe-area-inset-bottom, 0px);
             }
+            .openarg-chat-input-area { padding-bottom: max(12px, env(safe-area-inset-bottom, 12px)); }
             .openarg-chip { font-size: 0.62rem; padding: 5px 10px; }
         }
 
@@ -1108,22 +1112,21 @@ function toggleTheme() {
 
 <!-- AI CHAT -->
 <button id="openarg-chat-fab" title="Chat con OpenArg AI" aria-label="Abrir chat de IA">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/>
-        <line x1="10" y1="22" x2="14" y2="22"/><line x1="9" y1="19" x2="15" y2="19"/>
-        <path d="M12 2v6"/><path d="M8 5l4 3 4-3"/>
+    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="26" height="26">
+        <path d="M12 2C6.48 2 2 6.48 2 12c0 2.04.61 3.93 1.66 5.51L2.2 21.8a1 1 0 0 0 1.22 1.22l4.29-1.46A9.96 9.96 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm-1 4a1 1 0 1 1 2 0v1.5a1 1 0 1 1-2 0V6zm-3.5 5a1 1 0 1 1 0-2H9a1 1 0 1 1 0 2H7.5zm3.5 5a1 1 0 1 1-2 0v-1.5a1 1 0 1 1 2 0V16zm4.5-5H14a1 1 0 1 1 0-2h1.5a1 1 0 1 1 0 2z" opacity="0"/>
+        <path d="M15.5 5.5A6.5 6.5 0 0 0 9 2.05 6.5 6.5 0 0 0 5.07 9.54a4.5 4.5 0 0 0 .43 8.96h1a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5A2.5 2.5 0 0 1 4.09 11a2.5 2.5 0 0 1 1.41-2.35A4.5 4.5 0 0 1 9.5 4.5c.16 0 .32.01.47.03A5.5 5.5 0 0 1 12 4a5.5 5.5 0 0 1 2.03.53c.15-.02.31-.03.47-.03a4.5 4.5 0 0 1 4 4.15A2.5 2.5 0 0 1 19.91 11a2.5 2.5 0 0 1-2.41 2.5.5.5 0 0 0-.5.5v4a.5.5 0 0 0 .5.5h1a4.5 4.5 0 0 0 .43-8.96A6.5 6.5 0 0 0 15.5 5.5z"/>
+        <path d="M12 4a5.5 5.5 0 0 0-3 1.08V18a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5V5.08A5.5 5.5 0 0 0 12 4z" opacity="0.35"/>
+        <rect x="11.25" y="4" width="1.5" height="14.5" rx=".75" opacity="0.8"/>
+        <path d="M12 7.5c-1.5 0-3 1-3.5 2" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M12 7.5c1.5 0 3 1 3.5 2" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M12 11c-1.5 0-3.2.8-3.8 1.8" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M12 11c1.5 0 3.2.8 3.8 1.8" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>
     </svg>
 </button>
 
 <div id="openarg-chat-window">
     <div class="openarg-chat-header">
-        <div class="openarg-chat-avatar">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/>
-                <line x1="10" y1="22" x2="14" y2="22"/><line x1="9" y1="19" x2="15" y2="19"/>
-                <path d="M12 2v6"/><path d="M8 5l4 3 4-3"/>
-            </svg>
-        </div>
+        <div class="openarg-chat-avatar">🧠</div>
         <div>
             <div class="openarg-chat-title">OpenArg AI</div>
             <div class="openarg-chat-subtitle">Especialista en Modernización Municipal</div>
